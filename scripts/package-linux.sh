@@ -17,7 +17,7 @@ fi
 
 jpackage \
   --type deb \
-  --name Gamecenter \
+  --name AeroGamecenter \
   --input target \
   --main-jar "$(basename "$JAR")" \
   --dest release/linux
