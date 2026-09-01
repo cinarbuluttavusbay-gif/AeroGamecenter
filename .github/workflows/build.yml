@@ -1,9 +1,6 @@
 name: Build AeroGamecenter
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
 
 permissions:
@@ -48,8 +45,8 @@ jobs:
             --main-class Main `
             --dest dist
 
-      - name: EXE'yi Release'e yukle
-        uses: softprops/action-gh-release@v2
+      - name: EXE'yi artifact olarak yukle
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/AeroGamecenter*.exe
-          generate_release_notes: true
+          name: AeroGamecenter-Windows
+          path: dist/*.exe
