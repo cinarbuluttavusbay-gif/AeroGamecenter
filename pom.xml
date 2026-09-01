@@ -7,7 +7,7 @@
 
     <groupId>com.aerogamecenter</groupId>
     <artifactId>AeroGamecenter</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.0</version>
 
     <name>AeroGamecenter</name>
     <description>Java tabanlı AeroGamecenter uygulaması</description>
