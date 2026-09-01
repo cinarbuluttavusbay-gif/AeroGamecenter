@@ -3,10 +3,14 @@ set -e
 
 echo "[INFO] Smoke test basliyor..."
 
-if [ ! -f "target/AeroGamecenter-1.0.1.jar" ]; then
+JAR=$(find target -maxdepth 1 -type f -name "AeroGamecenter-*.jar" ! -name "*sources*" ! -name "*javadoc*" | head -n 1)
+
+if [ -z "$JAR" ]; then
     echo "[ERROR] JAR bulunamadi."
     exit 1
 fi
+
+echo "[INFO] JAR bulundu: $JAR"
 
 if [ ! -d "release/linux" ]; then
     echo "[ERROR] release/linux klasoru bulunamadi."
