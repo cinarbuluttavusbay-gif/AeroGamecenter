@@ -1,4 +1,4 @@
-name: AeroGamecenter
+name: Build AeroGamecenter
 
 on:
   push:
@@ -15,21 +15,28 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Java kur
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
 
-      - name: Java dosyalarini derle
+      - name: Java dosyalarini kontrol et
+        run: Get-ChildItem -Recurse
+
+      - name: Projeyi derle
+        shell: pwsh
         run: |
-          mkdir build
-          javac -d build *.java
+          New-Item -ItemType Directory -Force -Path build
+          $files = Get-ChildItem -Recurse -Filter *.java | Select-Object -ExpandProperty FullName
+          javac -d build $files
 
       - name: JAR olustur
+        shell: pwsh
         run: |
           jar --create --file AeroGamecenter.jar --main-class Main -C build .
 
       - name: EXE olustur
+        shell: pwsh
         run: |
           jpackage `
             --type exe `
@@ -42,5 +49,5 @@ jobs:
       - name: EXE dosyasini yukle
         uses: actions/upload-artifact@v4
         with:
-          name: RobloxTracker-Windows
-          path: dist/*.exe
+          name: AeroGamecenter-Windows
+          path: dist/
