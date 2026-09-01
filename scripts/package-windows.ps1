@@ -1,11 +1,14 @@
-
+```powershell
 $ErrorActionPreference = "Stop"
+
+Write-Host "Mevcut dizin:"
+Get-Location
+
+Write-Host "Tum dosyalar:"
+Get-ChildItem -Recurse | Select-Object FullName
 
 # Maven ile projeyi derle
 mvn clean package
-
-Write-Host "Proje dosyalari:"
-Get-ChildItem
 
 Write-Host "Target klasoru:"
 Get-ChildItem target
@@ -13,6 +16,7 @@ Get-ChildItem target
 # Eski release klasörünü temizle
 Remove-Item -Recurse -Force release/windows -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path release/windows | Out-Null
+```
 
 # JAR dosyasını bul
 $jar = Get-ChildItem target/*.jar |
