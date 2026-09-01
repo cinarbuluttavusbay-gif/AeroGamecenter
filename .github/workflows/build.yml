@@ -6,9 +6,6 @@ on:
       - "v*"
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -23,7 +20,10 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      - name: Java dosyalarini derle
+      - name: Java dosyalarini kontrol et
+        run: Get-ChildItem -Recurse
+
+      - name: Projeyi derle
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path build
@@ -38,8 +38,6 @@ jobs:
       - name: EXE olustur
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path dist
-
           jpackage `
             --type exe `
             --name AeroGamecenter `
@@ -48,8 +46,8 @@ jobs:
             --main-class Main `
             --dest dist
 
-      - name: EXE'yi Release'e yukle
-        uses: softprops/action-gh-release@v2
+      - name: EXE dosyasini yukle
+        uses: actions/upload-artifact@v4
         with:
-          files: dist/AeroGamecenter*.exe
-          generate_release_notes: true
+          name: AeroGamecenter-Windows
+          path: dist/
