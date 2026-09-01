@@ -1,4 +1,4 @@
-name: Build Roblox Tracker
+name: AeroGamecenter
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
 
       - name: JAR olustur
         run: |
-          jar --create --file RobloxTracker.jar --main-class Main -C build .
+          jar --create --file AeroGamecenter.jar --main-class Main -C build .
 
       - name: EXE olustur
         run: |
@@ -35,12 +35,12 @@ jobs:
             --type exe `
             --name RobloxTracker `
             --input . `
-            --main-jar RobloxTracker.jar `
+            --main-jar AeroGamecenter.jar `
             --main-class Main `
             --dest dist
 
       - name: EXE dosyasini yukle
         uses: actions/upload-artifact@v4
         with:
-          name: RobloxTracker-Windows
+          name: AeroGamecenter-Windows
           path: dist/*.exe
