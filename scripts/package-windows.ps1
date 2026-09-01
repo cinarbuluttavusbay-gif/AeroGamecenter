@@ -26,7 +26,7 @@ if ($null -eq $jar) {
 # EXE oluştur
 jpackage `
     --type exe `
-    --name Gamecenter `
+    --name AeroGamecenter `
     --input target `
     --main-jar $jar.Name `
     --dest release/windows
