@@ -6,44 +6,21 @@ Get-Location
 Write-Host "Tum dosyalar:"
 Get-ChildItem -Recurse | Select-Object FullName
 
-# Maven ile projeyi derle
-mvn clean package
+Write-Host "POM kontrolu:"
+Get-ChildItem pom.xml
 
-Write-Host "Target klasoru:"
-Get-ChildItem target
+Write-Host "Maven build basliyor..."
 
-# Eski release klasörünü temizle
-Remove-Item -Recurse -Force release/windows -ErrorAction SilentlyContinue
-New-Item -ItemType Directory -Force -Path release/windows | Out-Null
+mvn clean package -X
 
+Write-Host "Maven build bitti."
 
-# JAR dosyasını bul
-$jar = Get-ChildItem target/*.jar |
-    Where-Object { $_.Name -notlike "*sources*" -and $_.Name -notlike "*javadoc*" } |
-    Select-Object -First 1
+Write-Host "Target var mi?"
+Test-Path target
 
-if ($null -eq $jar) {
-    throw "JAR dosyası bulunamadı."
+if (Test-Path target) {
+    Get-ChildItem target
+} else {
+    Write-Host "TARGET KLASORU BULUNAMADI!"
+    exit 1
 }
-
-# EXE oluştur
-jpackage `
-    --type exe `
-    --name AeroGamecenter `
-    --input target `
-    --main-jar $jar.Name `
-    --dest release/windows
-
-# SHA256 oluştur
-$exe = Get-ChildItem release/windows/*.exe | Select-Object -First 1
-
-if ($null -eq $exe) {
-    throw "EXE dosyası oluşturulamadı."
-}
-
-$hash = Get-FileHash $exe.FullName -Algorithm SHA256
-
-"$($hash.Hash.ToLower())  $($exe.Name)" |
-    Out-File "$($exe.FullName).sha256" -Encoding ascii
-```
-
