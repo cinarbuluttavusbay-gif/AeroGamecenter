@@ -1,26 +1,48 @@
 $ErrorActionPreference = "Stop"
 
-Write-Host "Mevcut dizin:"
-Get-Location
+mvn clean package
 
-Write-Host "Tum dosyalar:"
-Get-ChildItem -Recurse | Select-Object FullName
-
-Write-Host "POM kontrolu:"
-Get-ChildItem pom.xml
-
-Write-Host "Maven build basliyor..."
-
-mvn clean package -X
-
-Write-Host "Maven build bitti."
-
-Write-Host "Target var mi?"
-Test-Path target
-
-if (Test-Path target) {
-    Get-ChildItem target
-} else {
-    Write-Host "TARGET KLASORU BULUNAMADI!"
-    exit 1
+if ($LASTEXITCODE -ne 0) {
+    throw "Maven build basarisiz oldu."
 }
+
+Remove-Item -Recurse -Force release/windows -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Force -Path release/windows | Out-Null
+
+$jar = Get-ChildItem target/*.jar |
+    Where-Object {
+        $_.Name -notlike "*sources*" -and
+        $_.Name -notlike "*javadoc*"
+    } |
+    Select-Object -First 1
+
+if ($null -eq $jar) {
+    throw "JAR dosyasi bulunamadi."
+}
+
+Write-Host "JAR: $($jar.Name)"
+
+jpackage `
+    --type exe `
+    --name AeroGamecenter `
+    --input target `
+    --main-jar $jar.Name `
+    --dest release/windows
+
+if ($LASTEXITCODE -ne 0) {
+    throw "jpackage basarisiz oldu."
+}
+
+$exe = Get-ChildItem release/windows/*.exe |
+    Select-Object -First 1
+
+if ($null -eq $exe) {
+    throw "EXE dosyasi olusturulamadi."
+}
+
+$hash = Get-FileHash $exe.FullName -Algorithm SHA256
+
+"$($hash.Hash.ToLower())  $($exe.Name)" |
+    Out-File "$($exe.FullName).sha256" -Encoding ascii
+
+Write-Host "EXE OLUSTU: $($exe.FullName)"
