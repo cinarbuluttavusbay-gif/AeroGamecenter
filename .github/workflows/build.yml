@@ -1,52 +1,124 @@
-name: Build AeroGamecenter
+name: Cross-platform release packages
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - "v*"
 
 permissions:
   contents: write
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-
+  linux:
+    name: Linux (.deb)
+    # Older build baseline keeps the .deb compatible with more Ubuntu/Debian systems.
+    runs-on: ubuntu-22.04
     steps:
-      - name: Kodlari indir
-        uses: actions/checkout@v4
-
-      - name: Java kur
-        uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
+          cache: maven
+      - name: Install Linux packaging tools
+        run: sudo apt-get update && sudo apt-get install -y fakeroot
+      - name: Build and package
+        run: ./scripts/package-linux.sh
+      - name: Run offline smoke tests
+        run: bash ./scripts/smoke-test.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: AeroGamecenter-Linux
+          path: release/linux/*
+          if-no-files-found: error
 
-      - name: Java dosyalarini derle
+  windows:
+    name: Windows (.exe)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Ensure WiX Toolset 3
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path build
-          $files = Get-ChildItem -Recurse -Filter *.java | Select-Object -ExpandProperty FullName
-          javac -d build $files
-
-      - name: JAR olustur
+          if (-not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
+            choco install wixtoolset --version=3.14.1 -y
+          }
+      - name: Build and package
         shell: pwsh
-        run: |
-          jar --create --file AeroGamecenter.jar --main-class Main -C build .
-
-      - name: EXE olustur
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path dist
-
-          jpackage `
-            --type exe `
-            --name AeroGamecenter `
-            --input . `
-            --main-jar AeroGamecenter.jar `
-            --main-class Main `
-            --dest dist
-
-      - name: EXE'yi artifact olarak yukle
-        uses: actions/upload-artifact@v4
+        run: ./scripts/package-windows.ps1
+      - uses: actions/upload-artifact@v7
         with:
           name: AeroGamecenter-Windows
-          path: dist/*.exe
+          path: release/windows/*
+          if-no-files-found: error
+
+  macos:
+    name: macOS (.dmg)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Build and package
+        run: ./scripts/package-macos.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: AeroGamecenter-macOS
+          path: release/macos/*
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    # A manual run repairs the release for the current pom.xml version without
+    # moving or recreating an existing tag.
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    needs: [linux, windows, macos]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
+        with:
+          path: release-assets
+      - name: Validate version and release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          POM_VERSION="$(awk '/<version>/{line=$0; sub(/.*<version>/,"",line); sub(/<\/version>.*/,"",line); print line; exit}' pom.xml)"
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            RELEASE_TAG="$GITHUB_REF_NAME"
+          else
+            RELEASE_TAG="v$POM_VERSION"
+          fi
+          TAG_VERSION="${RELEASE_TAG#v}"
+          test "$TAG_VERSION" = "$POM_VERSION" || { echo "Tag v$TAG_VERSION ile pom.xml $POM_VERSION eşleşmiyor." >&2; exit 1; }
+          mapfile -t INSTALLERS < <(find release-assets -type f \( -name '*.exe' -o -name '*.deb' -o -name '*.dmg' \) -print | sort)
+          test "${#INSTALLERS[@]}" -eq 3 || { echo "Üç platform kurucusu bulunamadı." >&2; exit 1; }
+          for INSTALLER in "${INSTALLERS[@]}"; do test -f "$INSTALLER.sha256" || { echo "$INSTALLER.sha256 eksik." >&2; exit 1; }; done
+          echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
+      - name: Create or update GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mapfile -t ASSETS < <(find release-assets -type f \( -name '*.exe' -o -name '*.deb' -o -name '*.dmg' -o -name '*.exe.sha256' -o -name '*.deb.sha256' -o -name '*.dmg.sha256' \) -print | sort)
+          NOTES_FILE="release-notes/$RELEASE_TAG.md"
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            if [[ -f "$NOTES_FILE" ]]; then gh release edit "$RELEASE_TAG" --notes-file "$NOTES_FILE"; fi
+            gh release upload "$RELEASE_TAG" "${ASSETS[@]}" --clobber
+          else
+            if [[ -f "$NOTES_FILE" ]]; then
+              gh release create "$RELEASE_TAG" "${ASSETS[@]}" --verify-tag --notes-file "$NOTES_FILE" --title "AeroMC $RELEASE_TAG"
+            else
+              gh release create "$RELEASE_TAG" "${ASSETS[@]}" --verify-tag --generate-notes --title "AeroMC $RELEASE_TAG"
+            fi
+          fi
