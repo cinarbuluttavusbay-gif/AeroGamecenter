@@ -11,7 +11,7 @@ Get-ChildItem pom.xml
 
 Write-Host "Maven build basliyor..."
 
-mvn clean package -X
+mvn -f Gamecenter/AeroGamecenter/pom.xml clean package
 
 Write-Host "Maven build bitti."
 
