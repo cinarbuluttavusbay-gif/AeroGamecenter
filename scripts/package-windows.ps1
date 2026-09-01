@@ -1,4 +1,3 @@
-```powershell
 $ErrorActionPreference = "Stop"
 
 Write-Host "Mevcut dizin:"
@@ -16,7 +15,7 @@ Get-ChildItem target
 # Eski release klasörünü temizle
 Remove-Item -Recurse -Force release/windows -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path release/windows | Out-Null
-```
+
 
 # JAR dosyasını bul
 $jar = Get-ChildItem target/*.jar |
