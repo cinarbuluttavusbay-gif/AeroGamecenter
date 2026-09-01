@@ -1,4 +1,3 @@
-```powershell id="h24eyv"
 $ErrorActionPreference = "Stop"
 
 Write-Host "Mevcut dizin:"
@@ -25,5 +24,3 @@ if (Test-Path target) {
     Write-Host "TARGET KLASORU BULUNAMADI!"
     exit 1
 }
-```
-
