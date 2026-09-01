@@ -1,1 +1,46 @@
+name: Build Roblox Tracker
 
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Kodlari indir
+        uses: actions/checkout@v4
+
+      - name: Java kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Java dosyalarini derle
+        run: |
+          mkdir build
+          javac -d build *.java
+
+      - name: JAR olustur
+        run: |
+          jar --create --file RobloxTracker.jar --main-class Main -C build .
+
+      - name: EXE olustur
+        run: |
+          jpackage `
+            --type exe `
+            --name RobloxTracker `
+            --input . `
+            --main-jar RobloxTracker.jar `
+            --main-class Main `
+            --dest dist
+
+      - name: EXE dosyasini yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: RobloxTracker-Windows
+          path: dist/*.exe
