@@ -3,7 +3,7 @@ set -e
 
 echo "[INFO] Smoke test basliyor..."
 
-if [ ! -f "target/AeroGamecenter-1.0.0.jar" ]; then
+if [ ! -f "target/AeroGamecenter-1.0.1.jar" ]; then
     echo "[ERROR] JAR bulunamadi."
     exit 1
 fi
