@@ -17,7 +17,7 @@ fi
 
 jpackage \
   --type dmg \
-  --name Gamecenter \
+  --name AeroGamecenter \
   --input target \
   --main-jar "$(basename "$JAR")" \
   --dest release/macos
