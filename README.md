@@ -1,23 +1,22 @@
-# AeroGamecenter
+#AeroGamecenter
 
 Roblox kullanıcılarının çevrimiçi durumunu ve mevcut aktivitelerini takip etmeye yarayan Java tabanlı bir uygulama.
 
-## ✨ Özellikler
+## Özellikler
 
 * Roblox kullanıcılarını kullanıcı adına göre takip etme
-* Çevrimiçi / çevrimdışı durumunu görüntüleme
+* Çevrimiçi veya çevrimdışı durumunu görüntüleme
 * Kullanıcının aktivite türünü tespit etme
 * Mümkün olduğunda kullanıcının bulunduğu oyunu görüntüleme
 * Kullanıcı bilgilerini otomatik olarak yenileme
 * Sürekli takip için Watch Mode desteği
-* Basit Java tabanlı kullanım
 
-## 🛠️ Gereksinimler
+## Gereksinimler
 
 * Java 17 veya üzeri
 * İnternet bağlantısı
 
-## 📦 Kurulum
+## Kurulum
 
 Projeyi bilgisayarınıza indirin:
 
@@ -32,7 +31,7 @@ Projeyi derleyin:
 javac *.java
 ```
 
-## ▶️ Kullanım
+## Kullanım
 
 Uygulamayı bir Roblox kullanıcı adı ile çalıştırın:
 
@@ -46,7 +45,7 @@ java Main <kullanıcı_adı>
 java Main Roblox
 ```
 
-### 👀 İzleme Modu
+### İzleme Modu
 
 Kullanıcının durumunu belirli aralıklarla otomatik olarak kontrol etmek için `--watch` seçeneğini kullanabilirsiniz:
 
@@ -54,9 +53,9 @@ Kullanıcının durumunu belirli aralıklarla otomatik olarak kontrol etmek içi
 java Main <kullanıcı_adı> --watch 30
 ```
 
-Bu komut kullanıcının durumunu her **30 saniyede bir** kontrol eder.
+Bu komut kullanıcının durumunu her 30 saniyede bir kontrol eder.
 
-## 📁 Proje Yapısı
+## Proje Yapısı
 
 ```text
 RobloxTracker/
@@ -68,7 +67,7 @@ RobloxTracker/
 └── ...
 ```
 
-## ℹ️ Nasıl Çalışır?
+## Nasıl Çalışır?
 
 Uygulama, kullanıcı bilgilerini ve çevrimiçi durumlarını almak için Roblox'un herkese açık web API'lerini kullanır.
 
@@ -79,12 +78,12 @@ Kullanıcının aktivitesine bağlı olarak aşağıdaki bilgiler görüntülene
 * Oyun içinde olup olmadığı
 * Mümkün olduğunda bulunduğu oyun hakkında bilgiler
 
-## ⚠️ Sorumluluk Reddi
+## Sorumluluk Reddi
 
 Bu proje Roblox Corporation ile bağlantılı değildir, Roblox tarafından desteklenmemektedir veya resmi olarak onaylanmamıştır.
 
 Roblox, Roblox Corporation'ın tescilli ticari markasıdır.
 
-## 📄 Lisans
+## Lisans
 
 Bu proje eğitim ve kişisel kullanım amaçlı geliştirilmiştir.
