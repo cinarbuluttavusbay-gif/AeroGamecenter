@@ -1,28 +1,52 @@
-```powershell id="h24eyv"
-$ErrorActionPreference = "Stop"
+name: Build AeroGamecenter
 
-Write-Host "Mevcut dizin:"
-Get-Location
+on:
+  workflow_dispatch:
 
-Write-Host "Tum dosyalar:"
-Get-ChildItem -Recurse | Select-Object FullName
+permissions:
+  contents: write
 
-Write-Host "POM kontrolu:"
-Get-ChildItem pom.xml
+jobs:
+  build-windows:
+    runs-on: windows-latest
 
-Write-Host "Maven build basliyor..."
+    steps:
+      - name: Kodlari indir
+        uses: actions/checkout@v4
 
-mvn clean package -X
+      - name: Java kur
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
 
-Write-Host "Maven build bitti."
+      - name: Java dosyalarini derle
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build
+          $files = Get-ChildItem -Recurse -Filter *.java | Select-Object -ExpandProperty FullName
+          javac -d build $files
 
-Write-Host "Target var mi?"
-Test-Path target
+      - name: JAR olustur
+        shell: pwsh
+        run: |
+          jar --create --file AeroGamecenter.jar --main-class Main -C build .
 
-if (Test-Path target) {
-    Get-ChildItem target
-} else {
-    Write-Host "TARGET KLASORU BULUNAMADI!"
-    exit 1
-}
-```
+      - name: EXE olustur
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist
+
+          jpackage `
+            --type exe `
+            --name AeroGamecenter `
+            --input . `
+            --main-jar AeroGamecenter.jar `
+            --main-class Main `
+            --dest dist
+
+      - name: EXE'yi artifact olarak yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: AeroGamecenter-Windows
+          path: dist/*.exe
