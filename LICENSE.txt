@@ -1,1 +1,62 @@
+AeroGamecenter Proprietary License
+Copyright (c) 2026 AeroGamecenter
 
+All rights reserved.
+
+1. OWNERSHIP
+
+The AeroGamecenter source code, software, documentation, assets,
+branding, logos, names, and related materials are the property of
+the copyright holder unless otherwise stated.
+
+2. RESTRICTIONS
+
+Without prior written permission from the copyright holder, no person
+or organization may:
+
+- Copy or redistribute the source code.
+- Publish or mirror the source code.
+- Sell, sublicense, or commercially distribute the software.
+- Modify and redistribute the source code.
+- Create derivative works based on the source code.
+- Repackage or rebrand the software.
+- Claim the software or any substantial part of it as their own.
+- Upload the source code or substantial portions of it to another
+  repository or public platform.
+
+3. PERSONAL USE
+
+The copyright holder may permit individuals to download, install,
+and use official releases of AeroGamecenter for personal purposes.
+
+Downloading or using an official release does not grant ownership of
+the source code or any intellectual property rights.
+
+4. CONTRIBUTIONS
+
+Unless a separate written agreement states otherwise, contributions
+submitted to this project may be used, modified, and distributed by
+the copyright holder as part of AeroGamecenter.
+
+5. THIRD-PARTY COMPONENTS
+
+This license does not override the licenses of third-party libraries,
+dependencies, trademarks, or other materials included with or used by
+AeroGamecenter. Those materials remain subject to their respective
+licenses.
+
+6. NO WARRANTY
+
+AeroGamecenter is provided "as is", without warranty of any kind,
+express or implied, to the maximum extent permitted by applicable law.
+
+7. PERMISSION
+
+Any permission not expressly granted by this license is reserved by
+the copyright holder.
+
+For licensing inquiries or permission requests, contact the copyright
+holder through the official project contact information.
+
+Copyright (c) 2026 AeroGamecenter.
+All rights reserved.
