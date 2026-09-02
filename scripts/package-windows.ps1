@@ -135,6 +135,7 @@ Write-Host "[4/5] Windows EXE installer olusturuluyor..."
     --main-jar "$($jar.Name)" `
     --main-class "RobloxTrackerApp" `
     --dest "release/windows" `
+    --icon "assets\AeroGamecenter.ico" `
     --win-dir-chooser `
     --win-shortcut `
     --win-menu `
