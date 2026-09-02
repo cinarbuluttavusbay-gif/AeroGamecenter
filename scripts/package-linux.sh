@@ -55,7 +55,6 @@ jpackage \
     --main-jar "$(basename "$JAR")" \
     --main-class "RobloxTrackerApp" \
     --dest "release/linux" \
-    --icon "assets/AeroGamecenter.png" \
     --linux-shortcut \
     --linux-menu-group "AeroGamecenter"
 
