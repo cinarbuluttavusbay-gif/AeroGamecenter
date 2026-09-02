@@ -34,7 +34,11 @@ Write-Host "[OK] JAR: $($jar.Name)"
 # 3. Release klasorunu temizle
 Write-Host "[3/5] Release klasoru hazirlaniyor..."
 
-Remove-Item -Path "release/windows" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item `
+    -Path "release/windows" `
+    -Recurse `
+    -Force `
+    -ErrorAction SilentlyContinue
 
 New-Item `
     -Path "release/windows" `
@@ -50,7 +54,9 @@ jpackage `
     --input "target" `
     --main-jar "$($jar.Name)" `
     --main-class "RobloxTrackerApp" `
-    --dest "release/windows"
+    --dest "release/windows" `
+    --win-shortcut `
+    --win-menu
 
 if ($LASTEXITCODE -ne 0) {
     throw "jpackage MSI olusturamadi."
@@ -88,3 +94,6 @@ Write-Host ""
 Write-Host "========================================"
 Write-Host " WINDOWS MSI PACKAGE BASARILI"
 Write-Host "========================================"
+Write-Host ""
+Write-Host "MSI: $($msi.FullName)"
+Write-Host ""
