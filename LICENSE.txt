@@ -1,5 +1,5 @@
-AeroGamecenter Proprietary License
-Copyright (c) 2026 AeroGamecenter
+AeroGroup Proprietary License
+Copyright (c) 2026 AeroGroup
 
 All rights reserved.
 
@@ -58,5 +58,5 @@ the copyright holder.
 For licensing inquiries or permission requests, contact the copyright
 holder through the official project contact information.
 
-Copyright (c) 2026 AeroGamecenter.
+Copyright (c) 2026 AeroGroup.
 All rights reserved.
