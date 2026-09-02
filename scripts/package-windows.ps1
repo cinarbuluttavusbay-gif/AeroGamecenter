@@ -33,15 +33,19 @@ if ($null -eq $jpackageCommand) {
 # Yaygin Java 21 konumlarini kontrol et
 if ($null -eq $jpackageCommand) {
     $possibleJdks = @(
-        "C:\Program Files\Java\jdk-21",
-        "C:\Program Files\Java\jdk-21.0.1",
-        "C:\Program Files\Java\jdk-21.0.2",
-        "C:\Program Files\Java\jdk-21.0.3",
-        "C:\Program Files\Java\jdk-21.0.4",
-        "C:\Program Files\Java\jdk-21.0.5",
-        "C:\Program Files\Java\jdk-21.0.6",
-        "C:\Program Files\Java\jdk-21.0.7",
-        "C:\Program Files\Java\jdk-21.0.8"
+        "C:\Program Files\Java\jdk-17",
+        "C:\Program Files\Java\jdk-17.0.1",
+        "C:\Program Files\Java\jdk-17.0.2",
+        "C:\Program Files\Java\jdk-17.0.3",
+        "C:\Program Files\Java\jdk-17.0.4",
+        "C:\Program Files\Java\jdk-17.0.5",
+        "C:\Program Files\Java\jdk-17.0.6",
+        "C:\Program Files\Java\jdk-17.0.7",
+        "C:\Program Files\Java\jdk-17.0.8",
+        "C:\Program Files\Java\jdk-17.0.9",
+        "C:\Program Files\Java\jdk-17.0.10",
+        "C:\Program Files\Java\jdk-17.0.11",
+        "C:\Program Files\Java\jdk-17.0.12"
     )
 
     foreach ($jdk in $possibleJdks) {
