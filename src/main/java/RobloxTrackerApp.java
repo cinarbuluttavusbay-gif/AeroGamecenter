@@ -97,13 +97,18 @@ public void show() {
     // ============================================================
 
     private void buildUi() {
-
         frame =
-                new JFrame("Aero GameCenter");
+        new JFrame("Aero GameCenter");
 
-        frame.setDefaultCloseOperation(
-                JFrame.EXIT_ON_CLOSE
-        );
+frame.setDefaultCloseOperation(
+        JFrame.EXIT_ON_CLOSE
+);
+
+URL iconUrl = RobloxTrackerApp.class.getResource("/AeroGamecenter.png");
+
+if (iconUrl != null) {
+    frame.setIconImage(new ImageIcon(iconUrl).getImage());
+}
 
         frame.setSize(950, 700);
 
