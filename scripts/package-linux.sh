@@ -55,9 +55,9 @@ jpackage \
     --main-jar "$(basename "$JAR")" \
     --main-class "RobloxTrackerApp" \
     --dest "release/linux" \
+    --icon "assets/AeroGamecenter.png" \
     --linux-shortcut \
     --linux-menu-group "AeroGamecenter"
-    --icon "assets/Gemini_Generated_Image_3yoev13yoev13yoe.png" \
 
 echo "[OK] jpackage tamamlandi."
 
