@@ -1,42 +1,67 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-echo "[INFO] Maven build basliyor..."
+echo "========================================"
+echo " AeroGamecenter Linux DEB Package"
+echo "========================================"
 
-mvn clean package
+echo "[0/5] Java kontrol ediliyor..."
 
-if [ $? -ne 0 ]; then
-    echo "[ERROR] Maven build basarisiz oldu."
+java -version
+echo ""
+
+echo "[INFO] jpackage:"
+jpackage --version
+
+echo ""
+echo "[1/5] Maven build basliyor..."
+
+mvn -B clean package
+
+echo "[OK] Maven build tamamlandi."
+
+echo ""
+echo "[2/5] JAR dosyasi araniyor..."
+
+JAR=$(find target -maxdepth 1 -type f -name "*.jar" \
+    ! -name "*sources*" \
+    ! -name "*javadoc*" \
+    -printf '%s %p\n' |
+    sort -nr |
+    head -n 1 |
+    cut -d' ' -f2-)
+
+if [ -z "$JAR" ]; then
+    echo "[ERROR] target klasorunde JAR bulunamadi."
     exit 1
 fi
 
-echo "[INFO] Release klasoru hazirlaniyor..."
+echo "[OK] JAR: $JAR"
+
+echo ""
+echo "[3/5] Release klasoru hazirlaniyor..."
 
 rm -rf release/linux
 mkdir -p release/linux
 
-JAR=$(find target -maxdepth 1 -type f -name "*.jar" ! -name "*sources*" ! -name "*javadoc*" | head -n 1)
-
-if [ -z "$JAR" ]; then
-    echo "[ERROR] JAR dosyasi bulunamadi."
-    exit 1
-fi
-
-echo "[INFO] JAR bulundu: $JAR"
-
-echo "[INFO] jpackage calistiriliyor..."
+echo ""
+echo "[4/5] Linux DEB installer olusturuluyor..."
 
 jpackage \
-  --type deb \
-  --name AeroGamecenter \
-  --input target \
-  --main-jar "$(basename "$JAR")" \
-  --dest release/linux
+    --type deb \
+    --name "AeroGamecenter" \
+    --app-version "1.0.0" \
+    --input "target" \
+    --main-jar "$(basename "$JAR")" \
+    --main-class "RobloxTrackerApp" \
+    --dest "release/linux" \
+    --linux-shortcut \
+    --linux-menu-group "AeroGamecenter"
 
-if [ $? -ne 0 ]; then
-    echo "[ERROR] jpackage basarisiz oldu."
-    exit 1
-fi
+echo "[OK] jpackage tamamlandi."
+
+echo ""
+echo "[5/5] DEB kontrol ediliyor..."
 
 DEB=$(find release/linux -maxdepth 1 -type f -name "*.deb" | head -n 1)
 
@@ -45,9 +70,15 @@ if [ -z "$DEB" ]; then
     exit 1
 fi
 
-echo "[INFO] DEB olusturuldu: $DEB"
+echo "[OK] DEB OLUSTU:"
+echo "     $DEB"
 
 sha256sum "$DEB" > "$DEB.sha256"
 
-echo "[INFO] SHA256 olusturuldu."
-echo "[INFO] Linux paketi basariyla tamamlandi."
+echo "[OK] SHA256 OLUSTU:"
+echo "     $DEB.sha256"
+
+echo ""
+echo "========================================"
+echo " LINUX DEB PACKAGE BASARILI"
+echo "========================================"
