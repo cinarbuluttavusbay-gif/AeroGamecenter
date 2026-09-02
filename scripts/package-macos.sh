@@ -53,7 +53,6 @@ jpackage \
     --main-jar "$(basename "$JAR")" \
     --main-class "RobloxTrackerApp" \
     --dest "release/macos" \
-    --icon "assets/AeroGamecenter.icns" 
 
 echo "[OK] jpackage tamamlandi."
 
