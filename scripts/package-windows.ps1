@@ -131,12 +131,11 @@ Write-Host "[4/5] Windows EXE installer olusturuluyor..."
     --main-jar "$($jar.Name)" `
     --main-class "RobloxTrackerApp" `
     --dest "release/windows" `
+    --icon "assets\favicon (1).ico" `
     --win-dir-chooser `
     --win-shortcut `
     --win-menu `
-    --win-menu-group "AeroGamecenter" `
-    --win-per-user-install
-    --icon "assets\favicon (1).ico" `
+    --win-menu-group "AeroGamecenter"
     
 if ($LASTEXITCODE -ne 0) {
     throw "jpackage EXE installer olusturamadi."
