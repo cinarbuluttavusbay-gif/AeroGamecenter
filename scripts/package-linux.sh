@@ -57,6 +57,7 @@ jpackage \
     --dest "release/linux" \
     --linux-shortcut \
     --linux-menu-group "AeroGamecenter"
+    --icon "assets/Gemini_Generated_Image_3yoev13yoev13yoe.png" \
 
 echo "[OK] jpackage tamamlandi."
 
