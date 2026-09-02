@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "========================================"
-Write-Host " AeroGamecenter Windows Package"
+Write-Host " AeroGamecenter Windows MSI Package"
 Write-Host "========================================"
 
 # 1. Maven build
@@ -13,10 +13,12 @@ if ($LASTEXITCODE -ne 0) {
     throw "Maven build basarisiz oldu."
 }
 
-# 2. JAR bul
-Write-Host "[2/5] JAR dosyasi bulunuyor..."
+Write-Host "[OK] Maven build tamamlandi."
 
-$jar = Get-ChildItem "target" -Filter "*.jar" -File |
+# 2. JAR dosyasini bul
+Write-Host "[2/5] JAR dosyasi araniyor..."
+
+$jar = Get-ChildItem -Path "target" -Filter "*.jar" -File |
     Where-Object {
         $_.Name -notlike "*sources*" -and
         $_.Name -notlike "*javadoc*"
@@ -27,19 +29,23 @@ if ($null -eq $jar) {
     throw "target klasorunde JAR bulunamadi."
 }
 
-Write-Host "JAR: $($jar.FullName)"
+Write-Host "[OK] JAR: $($jar.Name)"
 
-# 3. Release klasoru
+# 3. Release klasorunu temizle
 Write-Host "[3/5] Release klasoru hazirlaniyor..."
 
-Remove-Item "release/windows" -Recurse -Force -ErrorAction SilentlyContinue
-New-Item "release/windows" -ItemType Directory -Force | Out-Null
+Remove-Item -Path "release/windows" -Recurse -Force -ErrorAction SilentlyContinue
 
-# 4. Windows installer
-Write-Host "[4/5] Windows installer olusturuluyor..."
+New-Item `
+    -Path "release/windows" `
+    -ItemType Directory `
+    -Force | Out-Null
+
+# 4. MSI olustur
+Write-Host "[4/5] Windows MSI installer olusturuluyor..."
 
 jpackage `
-    --type exe `
+    --type msi `
     --name "AeroGamecenter" `
     --input "target" `
     --main-jar "$($jar.Name)" `
@@ -47,28 +53,38 @@ jpackage `
     --dest "release/windows"
 
 if ($LASTEXITCODE -ne 0) {
-    throw "jpackage Windows installer olusturamadi."
+    throw "jpackage MSI olusturamadi."
 }
 
-# 5. EXE kontrolu ve SHA256
-Write-Host "[5/5] EXE kontrol ediliyor..."
+Write-Host "[OK] jpackage tamamlandi."
 
-$exe = Get-ChildItem "release/windows" -Filter "*.exe" -File |
+# 5. MSI kontrolu ve SHA256
+Write-Host "[5/5] MSI kontrol ediliyor..."
+
+$msi = Get-ChildItem `
+    -Path "release/windows" `
+    -Filter "*.msi" `
+    -File |
     Select-Object -First 1
 
-if ($null -eq $exe) {
-    throw "EXE dosyasi bulunamadi."
+if ($null -eq $msi) {
+    throw "MSI dosyasi bulunamadi."
 }
 
-Write-Host "EXE OLUSTU: $($exe.FullName)"
+Write-Host "[OK] MSI OLUSTU: $($msi.FullName)"
 
-$hash = Get-FileHash $exe.FullName -Algorithm SHA256
+$hash = Get-FileHash `
+    -Path $msi.FullName `
+    -Algorithm SHA256
 
-"$($hash.Hash.ToLower())  $($exe.Name)" |
-    Out-File "$($exe.FullName).sha256" -Encoding ascii
+"$($hash.Hash.ToLower())  $($msi.Name)" |
+    Out-File `
+        -FilePath "$($msi.FullName).sha256" `
+        -Encoding ascii
 
-Write-Host "SHA256 OLUSTU: $($exe.FullName).sha256"
+Write-Host "[OK] SHA256 OLUSTU: $($msi.FullName).sha256"
 
+Write-Host ""
 Write-Host "========================================"
-Write-Host " Windows package BASARILI"
+Write-Host " WINDOWS MSI PACKAGE BASARILI"
 Write-Host "========================================"
