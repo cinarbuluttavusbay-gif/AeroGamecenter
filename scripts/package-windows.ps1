@@ -136,7 +136,8 @@ Write-Host "[4/5] Windows EXE installer olusturuluyor..."
     --win-menu `
     --win-menu-group "AeroGamecenter" `
     --win-per-user-install
-
+    --icon "assets\AeroGamecenter.ico" `
+    
 if ($LASTEXITCODE -ne 0) {
     throw "jpackage EXE installer olusturamadi."
 }
